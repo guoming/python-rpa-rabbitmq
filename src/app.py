@@ -1,4 +1,5 @@
 import csv
+import os
 
 import requests
 import json
@@ -8,17 +9,22 @@ import config
 # 定义发送消息的URL
 url = f"{config.rabbitmq_host}/api/exchanges/{config.vhost.replace('/','%2F')}/{config.exchange_name}/publish"
 
+
+# 获取当前环境根目录
+cur_dir=   os.path.dirname(os.path.abspath(__file__))
+
+
 # 打开CSV文件并读取内容
-csv_file_path = 'db/input.csv'
-csv_output_error_path = 'db/output_error.csv'
-csv_checkpoint_path= 'db/checkpoint'
+csv_file_path = f'{cur_dir}/../db/input.csv'
+csv_output_error_path = f'{cur_dir}/../db/output_error.csv'
+csv_checkpoint_path= f'{cur_dir}/../db/checkpoint'
 
 with open(csv_file_path, newline='') as csvfile:
     csvreader = csv.reader(csvfile, delimiter="\t")
     row_count = sum(1 for row in csvreader)
     row_index=0
     row_index_checkpoint= fs.fs_read(csv_checkpoint_path)
-    error_count=0;
+    error_count=0
 
     # 重置文件指针到文件开头
     csvfile.seek(0)
